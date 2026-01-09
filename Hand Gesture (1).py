@@ -1,8 +1,8 @@
-import cv2
+import cv2 #for image processing
 import numpy as np
 import screen_brightness_control as sbc
 import pyautogui
-import time
+import time #for delays
 from ultralytics import YOLO
 import math
 
@@ -152,4 +152,5 @@ while True:
         break
 
 cap.release()
+
 cv2.destroyAllWindows()
