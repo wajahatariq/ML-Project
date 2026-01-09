@@ -1,12 +1,13 @@
-import cv2 #for image processing
+#for image processing
+import cv2
 import numpy as np
-import screen_brightness_control as sbc
+import screen_brightness_control as sbc    # control brightness
 import pyautogui
 import time #for delays
 from ultralytics import YOLO
 import math
 
-# --- AUDIO LIBRARY SETUP ---
+# AUDIO SETUP 
 volume = None
 minVol = -65.25
 maxVol = 0.0
@@ -32,7 +33,6 @@ try:
 except Exception as e:
     print(f"Audio Warning: {e}")
 
-# --- CONFIGURATION ---
 MIN_Y_THRESHOLD = 0.2  # Hand high (20%) = 100% Value
 MAX_Y_THRESHOLD = 0.8  # Hand low (80%) = 0% Value
 
@@ -40,11 +40,11 @@ mute_cooldown = 0
 screenshot_cooldown = 0
 is_muted = False
 
-# --- LOAD MODEL ---
+# LOAD MODEL
 print("Loading YOLOv8 Model...")
 model = YOLO('yolov8n-pose.pt')
 
-# --- HELPER FUNCTIONS ---
+# map 
 def map_value(value, in_min, in_max, out_min, out_max):
     return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
@@ -58,7 +58,7 @@ def draw_bar(img, x, y, value, color, label):
     cv2.putText(img, f'{int(draw_val)}%', (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, color, 2)
     cv2.putText(img, label, (x, y + bar_height + 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1)
 
-# --- MAIN LOOP ---
+# MAIN LOOP
 cap = cv2.VideoCapture(0)
 print("System Ready.")
 print("Strict Mode Active:")
@@ -89,11 +89,11 @@ while True:
             lw_x, lw_y, lw_conf = kpts[9]
             rw_x, rw_y, rw_conf = kpts[10]
             
-            # Check presence of hands
+            # Check the hands
             left_present = lw_conf > 0.5
             right_present = rw_conf > 0.5
             
-            # --- SCENARIO 1: BOTH HANDS (Special Gestures ONLY) ---
+            # BOTH HANDS 
             if left_present and right_present:
                 # Provide visual feedback that we are in "Command Mode"
                 cv2.putText(frame, "COMMAND MODE", (w//2 - 100, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
@@ -119,7 +119,7 @@ while True:
                     cv2.rectangle(frame, (0, 0), (w, h), (255, 255, 255), 10)
                     cv2.putText(frame, "SCREENSHOT", (w//2 - 150, h//2), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 3)
 
-            # --- SCENARIO 2: SINGLE HAND (Individual Control) ---
+            #  SINGLE HAND 
             else:
                 # LEFT HAND ONLY -> BRIGHTNESS
                 if left_present:
@@ -154,3 +154,4 @@ while True:
 cap.release()
 
 cv2.destroyAllWindows()
+
